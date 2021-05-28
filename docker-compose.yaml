@@ -1,0 +1,56 @@
+# Docker Compose file for GPDB 6X multinode cluster
+
+version: '3.8'
+
+# The containers
+services:
+# ==================================================
+# The production cluster
+# ==================================================
+  cdw:
+    image: gpdb6-multinode-cluster/gpdb-image
+    hostname: cdw
+    tty: true
+    networks:
+      - the-network
+    volumes:
+      - gpdb-src-volume:/gpdb-src
+      - gpdb-scripts-volume:/gpdb-scripts
+
+  sdw1:
+    hostname: sdw1
+    image: gpdb6-multinode-cluster/gpdb-image
+    tty: true
+    networks:
+      - the-network
+    volumes:
+      - gpdb-src-volume:/gpdb-src
+      - gpdb-scripts-volume:/gpdb-scripts
+
+  sdw2:
+    hostname: sdw2
+    image: gpdb6-multinode-cluster/gpdb-image
+    tty: true
+    networks:
+      - the-network
+    volumes:
+      - gpdb-src-volume:/gpdb-src
+      - gpdb-scripts-volume:/gpdb-scripts
+
+# The network that bridges all the containers
+networks:
+  the-network:
+
+# The mounted volumes
+volumes:
+  gpdb-src-volume:
+    driver_opts:
+      o: bind
+      type: none
+      device: ${GPDB6_SRC}
+
+  gpdb-scripts-volume:
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/scripts
